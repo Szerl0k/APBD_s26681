@@ -1,0 +1,24 @@
+﻿namespace APBD_CW2;
+
+public class GasContainer : Container, IHazardNotifier
+{
+    
+    public double Pressure { get; set; }
+    
+    public GasContainer(double cargoMass, double height, double weight, double depth, double maxLoad, double pressure) : base(cargoMass, height, weight, depth, maxLoad, 'G')
+    {
+        Pressure = pressure;
+    }
+
+    public override void Empty()
+    {
+        // Zakładam, że "pozostawiamy 5% jego ładunku" oznacza 5% maksymalnie dozwolonej masy
+        CargoMass = Math.Round(MaxLoad * 0.05, 2);
+    }
+
+    public void SendTextNotification()
+    {
+        Console.WriteLine($"A hazardous situation has happened! Container: {SerialNumber}");
+    }
+    
+}
