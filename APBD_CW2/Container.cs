@@ -14,6 +14,11 @@ public class Container
     public double Weight { get; set; }
     public double Depth { get; set; }
     public string SerialNumber { get; private set; }
+
+    public double OverallMass
+    {
+        get => Math.Round(CargoMass + Weight, 2);
+    }
     
     public double MaxLoad { get; set; }
 
@@ -69,7 +74,7 @@ public class Container
     {
         return $"Container: {SerialNumber}, height: {Height}, weight: {Weight}, depth : {Depth}, max load: {MaxLoad}";
     }
-    
+
     
     
 }

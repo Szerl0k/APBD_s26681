@@ -20,8 +20,8 @@ public class ColdContainer : Container
     
     public double Temperature { get; set; }
 
-    public ColdContainer(double cargoMass, double height, double weight, double depth, double maxLoad, char type,
-        string productType) : base(cargoMass, height, weight, depth, maxLoad, type)
+    public ColdContainer(double cargoMass, double height, double weight, double depth, double maxLoad,
+        string productType) : base(cargoMass, height, weight, depth, maxLoad, 'C')
     {
         if (!_productsAndTemperatures.ContainsKey(productType))
         {
@@ -32,5 +32,10 @@ public class ColdContainer : Container
         
         Temperature = _productsAndTemperatures[productType];
         
+    }
+
+    public override string ToString()
+    {
+        return base.ToString() + $"product type: {ProductType}, temperature: {Temperature}";
     }
 }
