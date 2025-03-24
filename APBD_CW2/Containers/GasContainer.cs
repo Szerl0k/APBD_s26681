@@ -1,4 +1,6 @@
-﻿namespace APBD_CW2;
+﻿using APBD_CW2.Interfaces;
+
+namespace APBD_CW2.Containers;
 
 public class GasContainer : Container, IHazardNotifier
 {

@@ -1,4 +1,7 @@
-﻿namespace APBD_CW2;
+﻿using APBD_CW2.Containers;
+using APBD_CW2.Exceptions;
+
+namespace APBD_CW2;
 
 public class ContainerShip(double maxSpeed, int maxContainerCapacity, int maxWeightOfAllContainers)
 {
@@ -113,7 +116,13 @@ public class ContainerShip(double maxSpeed, int maxContainerCapacity, int maxWei
 
     public override string ToString()
     {
-        return $"Container ship: [{ContainersToString()}] Containers: {_containers.Count}, Total weight : {TotalWeight}, Max total weight of containers : {MaxTotalWeightOfContainers}, Max capacity : {MaxContainerCapacity}";
+        return $"""
+                Container ship: [{ContainersToString()}] 
+                Containers: {_containers.Count}
+                Total weight : {TotalWeight}
+                Max total weight of containers : {MaxTotalWeightOfContainers},
+                Max capacity : {MaxContainerCapacity}"
+                """;
     }
     
     

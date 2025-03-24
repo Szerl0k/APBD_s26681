@@ -1,4 +1,4 @@
-﻿namespace APBD_CW2;
+﻿namespace APBD_CW2.Interfaces;
 
 public interface IHazardNotifier
 {

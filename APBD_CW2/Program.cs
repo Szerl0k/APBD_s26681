@@ -1,4 +1,7 @@
-﻿namespace APBD_CW2;
+﻿using APBD_CW2.Containers;
+using APBD_CW2.Exceptions;
+
+namespace APBD_CW2;
 
 class Program
 {
