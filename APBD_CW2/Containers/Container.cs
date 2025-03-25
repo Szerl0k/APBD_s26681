@@ -73,7 +73,7 @@ public class Container
 
     public override string ToString()
     {
-        return $"Container: {SerialNumber}, height: {Height}, weight: {Weight}, depth : {Depth}, max load: {MaxLoad}";
+        return $"[Container: {SerialNumber},  height: {Height},  weight: {Weight},  depth: {Depth},  max load: {MaxLoad},";
     }
 
     

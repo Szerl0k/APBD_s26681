@@ -36,6 +36,6 @@ public class ColdContainer : Container
 
     public override string ToString()
     {
-        return base.ToString() + $"product type: {ProductType}, temperature: {Temperature}";
+        return base.ToString() + $"  product type: {ProductType},  temperature: {Temperature}]";
     }
 }

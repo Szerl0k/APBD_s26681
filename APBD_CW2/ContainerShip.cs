@@ -3,7 +3,7 @@ using APBD_CW2.Exceptions;
 
 namespace APBD_CW2;
 
-public class ContainerShip(double maxSpeed, int maxContainerCapacity, int maxWeightOfAllContainers)
+public class ContainerShip(double maxSpeed, int maxContainerCapacity, double maxWeightOfAllContainers)
 {
     private List<Container> _containers = [];
     
@@ -11,7 +11,7 @@ public class ContainerShip(double maxSpeed, int maxContainerCapacity, int maxWei
 
     public int MaxContainerCapacity { get; set; } = maxContainerCapacity;
 
-    public int MaxTotalWeightOfContainers { get; set; } = maxWeightOfAllContainers;
+    public double MaxTotalWeightOfContainers { get; set; } = maxWeightOfAllContainers;
 
     private double TotalWeight
     {
@@ -72,15 +72,14 @@ public class ContainerShip(double maxSpeed, int maxContainerCapacity, int maxWei
     }
     
     
-    // Zakładam że "Zastąpienie kontenera na statku o danym numerze innym kontenerem", oznacza model seryjny konteneru
-    public void ReplaceContainers(string replace, Container with)
+    public void ReplaceContainers(Container replace, Container with)
     {
 
-        int? index = FindContainerIndex(replace);
+        int? index = FindContainerIndex(replace.SerialNumber);
         
         if (index == null)
         {
-            Console.WriteLine($"Container {replace} not found");
+            Console.WriteLine($"Container {replace.SerialNumber} not found");
         }
         else
         {
@@ -120,8 +119,9 @@ public class ContainerShip(double maxSpeed, int maxContainerCapacity, int maxWei
                 Container ship: [{ContainersToString()}] 
                 Containers: {_containers.Count}
                 Total weight : {TotalWeight}
-                Max total weight of containers : {MaxTotalWeightOfContainers},
-                Max capacity : {MaxContainerCapacity}"
+                Max total weight of containers : {MaxTotalWeightOfContainers}
+                Max capacity : {MaxContainerCapacity}
+                
                 """;
     }
     
@@ -146,7 +146,11 @@ public class ContainerShip(double maxSpeed, int maxContainerCapacity, int maxWei
         {
             result += container.SerialNumber + ", ";
         }
-        result = result.Remove(result.Length - 2, 2);
+
+        if (_containers.Count != 0)
+        {
+            result = result.Remove(result.Length - 2, 2);
+        }
         
         return result;
     }

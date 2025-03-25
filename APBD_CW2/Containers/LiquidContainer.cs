@@ -49,6 +49,6 @@ public class LiquidContainer(
 
     public override string ToString()
     {
-        return base.ToString() + $"is load hazardous: {IsLoadHazardous}";
+        return base.ToString() + $"  is load hazardous: {IsLoadHazardous}]";
     }
 }
