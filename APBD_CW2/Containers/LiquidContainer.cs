@@ -3,14 +3,13 @@
 namespace APBD_CW2.Containers;
 
 public class LiquidContainer(
-    double cargoMass,
     double height,
     double weight,
     double depth,
     double maxLoad,
     bool isLoadHazardous
     )
-    : Container(cargoMass, height, weight, depth, maxLoad, 'L'), IHazardNotifier
+    : Container(height, weight, depth, maxLoad, 'L'), IHazardNotifier
 {
     
     public bool IsLoadHazardous { get; set; } = isLoadHazardous;

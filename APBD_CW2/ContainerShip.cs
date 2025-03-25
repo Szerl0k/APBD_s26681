@@ -27,7 +27,7 @@ public class ContainerShip(double maxSpeed, int maxContainerCapacity, double max
     }
 
 
-    public void AddContainer(Container container)
+    private void AddContainer(Container container)
     {
 
         if (_containers.Count >= MaxContainerCapacity)
@@ -37,26 +37,29 @@ public class ContainerShip(double maxSpeed, int maxContainerCapacity, double max
         
         if (Math.Round(TotalWeight + container.OverallMass, 2) > MaxTotalWeightOfContainers)
         {
-            throw new ContainerOverflowException($"Can't add  container {container.SerialNumber}, because it's overall mass would exceed the max weight {MaxTotalWeightOfContainers}");
+            throw new ContainerOverflowException($"Can't add container {container.SerialNumber}, because it's overall mass would exceed the max weight {MaxTotalWeightOfContainers}");
         }
         _containers.Add(container);
         
         
     }
 
-    public void AddContainers(List<Container> containers)
+    public List<Container> AddContainers(List<Container> containers)
     {
+        var containersToBeDeleted = new List<Container>();
         foreach (var container in containers)
         {
             try
             {
                 AddContainer(container);
+                containersToBeDeleted.Add(container);
             }
             catch (ContainerOverflowException e)
             {
                 Console.WriteLine(e.Message);
             }
         }
+        return containersToBeDeleted;
     }
 
     public void RemoveContainer(Container container)
@@ -125,21 +128,7 @@ public class ContainerShip(double maxSpeed, int maxContainerCapacity, double max
                 """;
     }
     
-    
-    private int? FindContainerIndex(string serialNumber)
-    {
-        for (var i = 0; i < _containers.Count; i++)
-        {
-            if (_containers[i].SerialNumber == serialNumber)
-            {
-                return i;
-            }
-        }
-
-        return null;
-    }
-
-    private string ContainersToString()
+    public string ContainersToString()
     {
         string result = "";
         foreach (var container in _containers)
@@ -154,5 +143,19 @@ public class ContainerShip(double maxSpeed, int maxContainerCapacity, double max
         
         return result;
     }
+    
+    private int? FindContainerIndex(string serialNumber)
+    {
+        for (var i = 0; i < _containers.Count; i++)
+        {
+            if (_containers[i].SerialNumber == serialNumber)
+            {
+                return i;
+            }
+        }
+
+        return null;
+    }
+    
     
 }

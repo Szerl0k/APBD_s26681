@@ -23,7 +23,7 @@ public class Container
     
     public double MaxLoad { get; set; }
 
-    public Container(double cargoMass, double height, double weight, double depth, double maxLoad, char type)
+    public Container(double height, double weight, double depth, double maxLoad, char type)
     {
 
         if (!_containerTypes.Contains(type))
@@ -31,7 +31,6 @@ public class Container
             throw new ArgumentException($"Invalid container type: {type}");
         }
         
-        CargoMass = cargoMass;
         Height = height;
         Weight = weight;
         Depth = depth;
@@ -57,7 +56,11 @@ public class Container
         
     }
 
-
+    public static HashSet<char> GetContainerTypes()
+    {
+        return _containerTypes;
+    }
+    
     protected string GenerateSerialNumber(char type)
     {
         var newSerialNumber = "";

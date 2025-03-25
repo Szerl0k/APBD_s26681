@@ -20,8 +20,8 @@ public class ColdContainer : Container
     
     public double Temperature { get; set; }
 
-    public ColdContainer(double cargoMass, double height, double weight, double depth, double maxLoad,
-        string productType) : base(cargoMass, height, weight, depth, maxLoad, 'C')
+    public ColdContainer(double height, double weight, double depth, double maxLoad,
+        string productType) : base(height, weight, depth, maxLoad, 'C')
     {
         if (!_productsAndTemperatures.ContainsKey(productType))
         {
