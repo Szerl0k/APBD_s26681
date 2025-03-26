@@ -62,9 +62,19 @@ public class ContainerShip(double maxSpeed, int maxContainerCapacity, double max
         return containersToBeDeleted;
     }
 
-    public void RemoveContainer(Container container)
+    public Container RemoveContainer(string serialNumber)
     {
+        var container = _containers.Find(c => c.SerialNumber == serialNumber);
+
+        if (container == null)
+        {
+            throw new ArgumentException($"Kontener o numerze seryjnym {serialNumber} nie istnieje w tym kontenerowcu");
+        }
+        
         _containers.Remove(container);
+
+        return container;
+
     }
 
     public List<Container> Unload()
@@ -75,14 +85,14 @@ public class ContainerShip(double maxSpeed, int maxContainerCapacity, double max
     }
     
     
-    public void ReplaceContainers(Container replace, Container with)
+    public void ReplaceContainers(string replaceSerialNumber, Container with)
     {
 
-        int? index = FindContainerIndex(replace.SerialNumber);
+        int? index = FindContainerIndex(replaceSerialNumber);
         
         if (index == null)
         {
-            Console.WriteLine($"Container {replace.SerialNumber} not found");
+            Console.WriteLine($"Container {replaceSerialNumber} not found");
         }
         else
         {
@@ -91,24 +101,24 @@ public class ContainerShip(double maxSpeed, int maxContainerCapacity, double max
         
     }
 
-    public void MoveContainer(Container container, ContainerShip secondShip)
+    public void MoveContainer(string serialNumber, ContainerShip secondShip)
     {
-        int? index = FindContainerIndex(container.SerialNumber);
+        int? index = FindContainerIndex(serialNumber);
         
         if (index == null)
         {
-            Console.WriteLine($"Container {container.SerialNumber} not found");
+            Console.WriteLine($"Container {serialNumber} not found");
         }
 
         try
         {
-            secondShip.AddContainer(container);
+            secondShip.AddContainer(_containers[index.Value]);
             _containers.RemoveAt(index.Value);
         }
         catch (ContainerOverflowException e)
         {
-            Console.WriteLine(e.Message);
-            Console.WriteLine($"Failed to move {container.SerialNumber}");
+            // Obsługa przeniesiona do miejsca wywołania MoveContainer()
+            throw new ContainerOverflowException(e.Message);
         }
         
         

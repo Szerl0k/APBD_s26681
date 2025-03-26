@@ -13,9 +13,13 @@ public class Menu
 
     public void Start()
     {
+        
+        LoadTestData();
+        
         bool exit = false;
         while (!exit)
         {
+            
             Show();
 
             switch (ReadOption())
@@ -27,7 +31,6 @@ public class Menu
                     
                 case 1:
                     CreateShip();
-                    Console.WriteLine("Statek utworzony");
                     break;
                     
                 case 2:
@@ -43,7 +46,31 @@ public class Menu
                     break;
                 
                 case 5:
-                    LoadContainers();
+                    LoadShip();
+                    break;
+                
+                case 6:
+                    RemoveContainer();
+                    break;
+                
+                case 7:
+                    UnloadShip();
+                    break;
+                
+                case 8:
+                    ReplaceContainers();
+                    break;
+                
+                case 9:
+                    MoveContainers();
+                    break;
+                
+                case 10:
+                    LoadContainer();
+                    break;
+                
+                case 11:
+                    UnloadContainer();
                     break;
                 
                 case 0:
@@ -56,6 +83,26 @@ public class Menu
         }
     }
 
+    private void LoadTestData()
+    {
+        _ships.AddRange(
+            [
+                new ContainerShip(10, 10, 10000),
+                new ContainerShip(10, 3, 10000)
+            ]
+            );
+        
+        _containers.AddRange(
+            [
+            new GasContainer(10, 10, 10, 1000, 1),
+            new GasContainer(10, 10, 10, 2000, 2),
+            new LiquidContainer(10, 10, 10, 1000, true),
+            new LiquidContainer(10, 10, 10, 1000, false),
+            new ColdContainer(10, 10, 10, 1000, "Frozen Pizza"),
+            new ColdContainer(10, 10, 10, 1000, "Butter")
+            ]
+            );
+    }
     private void Show()
     {
         string mainMenu = $"""
@@ -76,7 +123,13 @@ public class Menu
                            [2] Usuń kontenerowiec
                            [3] Dodaj kontener
                            [4] Usuń kontener
-                           [5] Załaduj kontenery
+                           [5] Załaduj kontenery na statek
+                           [6] Usuń kontener ze statku
+                           [7] Rozładuj kontenerowiec
+                           [8] Zastąp kontener na statku z innym kontenerem
+                           [9] Przenieś kontene między dwoma statkami
+                           [10] Załaduj kontener towarem
+                           [11] Rozładuj kontener
                            [0] Wyjdź
                            """;
         Console.Clear();
@@ -88,6 +141,7 @@ public class Menu
         
         Console.WriteLine("\nPress any key to continue...");
         Console.ReadKey();
+        Console.Clear();
     }
     
     private static int? ReadOption()
@@ -128,6 +182,8 @@ public class Menu
         maxWeightOfAllContainers = double.Parse(Console.ReadLine());
         
         _ships.Add(new ContainerShip(maxSpeed, maxContainerCapacity, maxWeightOfAllContainers));
+        
+        Console.WriteLine("Statek utworzony");
         
     }
 
@@ -218,6 +274,7 @@ public class Menu
         depth = double.Parse(Console.ReadLine());
 
         Console.WriteLine("Podaj maksymalną ładowność");
+        Console.WriteLine("Dla kontenera typu 'L' zostanie ona przeskalowana zgodnie z wytycznymi ładunku niebezpiecznego");
         maxLoad = double.Parse(Console.ReadLine());
 
         switch (c)
@@ -293,7 +350,7 @@ public class Menu
     {
         if (_containers.Count == 0)
         {
-            Console.WriteLine("Brak kontenerowców do usunięcia");
+            Console.WriteLine("Brak kontenerów do usunięcia");
             return;
         }
         
@@ -311,7 +368,7 @@ public class Menu
         Console.WriteLine("Kontener usunięty");
     }
 
-    private static void LoadContainers()
+    private static void LoadShip()
     {
         int inputShip = ShowShipsCompressed() - 1;
 
@@ -328,9 +385,10 @@ public class Menu
         
         string[] input = Console.ReadLine().Split();
         
+        
         int[] numbers = new int[input.Length];
         
-        // Zamiana inputu na inty. -1 bo cyfry w inpucie są większe o 1 od indeksów
+        // Zamiana na inty -1, bo cyfry w inpucie są większe o 1 od indeksów
         for (int i = 0; i < input.Length; i++)
         {
             numbers[i] = int.Parse(input[i]) - 1;
@@ -338,14 +396,22 @@ public class Menu
 
         List<Container> containersToBeAdded = [];
 
-        foreach (int i in numbers)
+        try
         {
-            containersToBeAdded.Add(_containers[i]);
+            foreach (int i in numbers)
+            {
+                containersToBeAdded.Add(_containers[i]);
+            }
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine("Jeden z podanych numerów jest nieprawidłowy");
+            return;
         }
 
         try
         {
-            
+
             List<Container> containersToBeDeleted = _ships[inputShip].AddContainers(containersToBeAdded);
 
             Console.WriteLine(_ships[inputShip].ContainersToString());
@@ -354,6 +420,7 @@ public class Menu
             {
                 _containers.Remove(container);
             }
+
             Console.WriteLine("Kontenery dodane poprawnie");
 
         }
@@ -361,11 +428,156 @@ public class Menu
         {
             Console.WriteLine(e.Message);
         }
+        // Tutaj łapiemy sytuację, gdyby użytkownik wybrał statek, który nie istnieje
+        catch (Exception e)
+        {
+            Console.WriteLine("Niepoprawny numer statku");
+        }
         
         
+    }
+
+    private void RemoveContainer()
+    {
+        int inputShip = ShowShipsCompressed() - 1;
+
+        Console.WriteLine("Kontenerowiec");
+        Console.WriteLine(_ships[inputShip].ContainersToString());
+        Console.WriteLine("Podaj nazwę kontenera do usunięcia");
+        
+        string? serialNumber = Console.ReadLine();
+
+        if (serialNumber == null)
+        {
+            Console.WriteLine("Nieprawidłowy input");
+            return;
+        }
+
+        try
+        {
+            var removedContainer = _ships[inputShip].RemoveContainer(serialNumber);
+            Console.WriteLine("Kontener usunięty ze statku");
+
+            _containers.Add(removedContainer);
+
+        }
+        catch (ArgumentException e)
+        {
+            Console.WriteLine(e.Message);
+            Console.WriteLine();
+            
+        }
+
+        Console.WriteLine(_ships[inputShip].ContainersToString());
+
+        
+    }
+
+    private void UnloadShip()
+    {
+        int inputShip = ShowShipsCompressed() - 1;
+        
+        var containers = _ships[inputShip].Unload();
+        
+        _containers.AddRange(containers);
+
+        Console.WriteLine("Kontenerowiec wyładowany");
+        
+    }
+
+    private void ReplaceContainers()
+    {
+        int inputContainer = ShowContainersCompressed() - 1;
+        
+        var with = _containers[inputContainer];
         
         
+        int inputShip = ShowShipsCompressed() - 1;
+
+        Console.WriteLine("Kontenerowiec");
+        Console.WriteLine(_ships[inputShip].ContainersToString());
+        Console.WriteLine("\nPodaj nazwę kontenera do usunięcia");
         
+        string? replaceSerialNumber = Console.ReadLine();
+
+        if (replaceSerialNumber == null)
+        {
+            Console.WriteLine("Nieprawidłowy input");
+            return;
+        }
+        
+        
+        _ships[inputShip].ReplaceContainers(replaceSerialNumber, with);
+
+        Console.WriteLine(_ships[inputShip].ContainersToString());
+
+        Console.WriteLine("Kontenery zastąpione");
+
+
+    }
+
+    private void MoveContainers()
+    {
+        int inputFirstShip = ShowShipsCompressed() - 1;
+
+        Console.WriteLine("Kontenerowiec");
+        Console.WriteLine(_ships[inputFirstShip].ContainersToString());
+        Console.WriteLine("\nPodaj nazwę kontenera do przeniesienia");
+        
+        string? serialNumber = Console.ReadLine();
+
+        if (serialNumber == null)
+        {
+            Console.WriteLine("Nieprawidłowy input");
+            return;
+        }
+
+        Console.WriteLine($"Wybierz kontenerowiec na który kontener {serialNumber} na zostać przeniesiony");
+        
+        int inputSecondShip = ShowShipsCompressed() - 1;
+
+        try
+        {
+            _ships[inputFirstShip].MoveContainer(serialNumber, _ships[inputSecondShip]);
+            Console.WriteLine("Kontener przeniesiony");
+        }
+        catch (ContainerOverflowException e)
+        {
+            Console.WriteLine(e.Message);
+            Console.WriteLine($"Failed to move {serialNumber}");
+        }
+        
+    }
+    
+    private void LoadContainer()
+    {
+        int inputContainer = ShowContainersCompressed() - 1;
+
+        Console.WriteLine("Podaj masę ładunku");
+        
+        int loadMass = int.Parse(Console.ReadLine());
+
+        try
+        {
+            _containers[inputContainer].Load(loadMass);
+            Console.WriteLine($"Kontener {_containers[inputContainer].SerialNumber} załadowany");
+        }
+        catch (OverfillException e)
+        {
+            Console.WriteLine(e.Message);
+        }
+        
+        
+    }
+    
+    
+    private void UnloadContainer()
+    {
+        int inputContainer = ShowContainersCompressed() - 1;
+        
+        _containers[inputContainer].Empty();
+
+        Console.WriteLine($"Kontener {_containers[inputContainer].SerialNumber} rozładowany");
     }
     
 }

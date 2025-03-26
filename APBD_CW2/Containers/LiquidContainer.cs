@@ -2,17 +2,17 @@
 
 namespace APBD_CW2.Containers;
 
-public class LiquidContainer(
-    double height,
-    double weight,
-    double depth,
-    double maxLoad,
-    bool isLoadHazardous
-    )
-    : Container(height, weight, depth, maxLoad, 'L'), IHazardNotifier
+public class LiquidContainer: Container, IHazardNotifier
 {
-    
-    public bool IsLoadHazardous { get; set; } = isLoadHazardous;
+
+    public LiquidContainer(double height, double weight, double depth, double maxLoad, bool isLoadHazardous) : base(height, weight, depth, maxLoad, 'L')
+    {
+        IsLoadHazardous = isLoadHazardous;
+        MaxLoad = CalculateMaxAllowedLoad(CalculateMaxLoadModifier());
+
+        // (height, weight, depth, maxLoad, 'L')
+    }
+    public bool IsLoadHazardous { get; }
 
     public void SendTextNotification()
     {
@@ -22,10 +22,7 @@ public class LiquidContainer(
     public override void Load(double loadMass)
     {
         
-        
-        double allowedMaxLoad = CalculateMaxAllowedLoad(CalculateMaxLoadModifier());
-        
-        if (allowedMaxLoad - loadMass < 0)
+        if (MaxLoad - loadMass < 0)
         {
             SendTextNotification();
         } 

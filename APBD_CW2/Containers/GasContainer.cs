@@ -10,6 +10,7 @@ public class GasContainer : Container, IHazardNotifier
     public GasContainer(double height, double weight, double depth, double maxLoad, double pressure) : base(height, weight, depth, maxLoad, 'G')
     {
         Pressure = pressure;
+        Empty();
     }
 
     public override void Empty()
@@ -17,7 +18,7 @@ public class GasContainer : Container, IHazardNotifier
         // Zakładam, że "pozostawiamy 5% jego ładunku" oznacza 5% maksymalnie dozwolonej masy
         CargoMass = Math.Round(MaxLoad * 0.05, 2);
     }
-
+    
     public void SendTextNotification()
     {
         Console.WriteLine($"A hazardous situation has happened! Container: {SerialNumber}");
