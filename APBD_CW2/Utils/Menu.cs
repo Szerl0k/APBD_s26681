@@ -13,14 +13,13 @@ public class Menu
 
     public void Start()
     {
-        
         LoadTestData();
         
         bool exit = false;
         while (!exit)
         {
             
-            Show();
+            ShowMainMenuOptions();
 
             switch (ReadOption())
             {
@@ -85,25 +84,21 @@ public class Menu
 
     private void LoadTestData()
     {
-        _ships.AddRange(
-            [
+        _ships.AddRange([
                 new ContainerShip(10, 10, 10000),
                 new ContainerShip(10, 3, 10000)
-            ]
-            );
+            ]);
         
-        _containers.AddRange(
-            [
+        _containers.AddRange([
             new GasContainer(10, 10, 10, 1000, 1),
             new GasContainer(10, 10, 10, 2000, 2),
             new LiquidContainer(10, 10, 10, 1000, true),
             new LiquidContainer(10, 10, 10, 1000, false),
             new ColdContainer(10, 10, 10, 1000, "Frozen Pizza"),
             new ColdContainer(10, 10, 10, 1000, "Butter")
-            ]
-            );
+            ]);
     }
-    private void Show()
+    private void ShowMainMenuOptions()
     {
         string mainMenu = $"""
                            ==========================================================
@@ -127,7 +122,7 @@ public class Menu
                            [6] Usuń kontener ze statku
                            [7] Rozładuj kontenerowiec
                            [8] Zastąp kontener na statku z innym kontenerem
-                           [9] Przenieś kontene między dwoma statkami
+                           [9] Przenieś kontener między dwoma statkami
                            [10] Załaduj kontener towarem
                            [11] Rozładuj kontener
                            [0] Wyjdź
@@ -186,8 +181,9 @@ public class Menu
         Console.WriteLine("Statek utworzony");
         
     }
-
-    private static int ShowShipsCompressed()
+    
+    private static int DisplayCompactShipList()
+    // Returns index of ship chosen by user
     {
         Console.WriteLine("\nWybierz kontenerowiec:");
         for (var i = 0 ; i < _ships.Count; i++)
@@ -196,10 +192,11 @@ public class Menu
         }
 
         Console.WriteLine();
-        return int.Parse(Console.ReadLine());
+        return int.Parse(Console.ReadLine()) - 1;
     }
 
-    private static int ShowContainersCompressed()
+    private static int DisplayCompactContainerList()
+    // Returns index of container chosen from _containers
     {
         Console.WriteLine("\nWybierz kontener:");
 
@@ -209,7 +206,7 @@ public class Menu
         }
 
         Console.WriteLine();
-        return int.Parse(Console.ReadLine());
+        return int.Parse(Console.ReadLine()) - 1;
     }
     
     
@@ -223,17 +220,17 @@ public class Menu
             return;
         }
         
-        int input = ShowShipsCompressed();
+        int input = DisplayCompactShipList();
         
 
-        if (input > _ships.Count)
+        if (input > _ships.Count - 1)
         {
             Console.WriteLine($"Kontenerowiec o numerze {input} nie istnieje");
             return;
         }
         
-        var ship = _ships[input - 1];
-        _ships.RemoveAt(input - 1);
+        var ship = _ships[input];
+        _ships.RemoveAt(input);
         Console.WriteLine(ship.ToString());
         Console.WriteLine("Kontenerowiec usunięty");
     }
@@ -354,7 +351,7 @@ public class Menu
             return;
         }
         
-        int input = ShowContainersCompressed();
+        int input = DisplayCompactContainerList();
 
         if (input > _containers.Count)
         {
@@ -370,9 +367,9 @@ public class Menu
 
     private static void LoadShip()
     {
-        int inputShip = ShowShipsCompressed() - 1;
+        int inputShip = DisplayCompactShipList();
 
-        // Nie używam ShowContainersCompressed(), bo chcemy zapytać użytkownika o listę
+        // Nie używamy ShowContainersCompressed(), bo chcemy zapytać użytkownika o listę
         
         Console.WriteLine("\nWybierz kontener(y):");
 
@@ -439,7 +436,7 @@ public class Menu
 
     private void RemoveContainer()
     {
-        int inputShip = ShowShipsCompressed() - 1;
+        int inputShip = DisplayCompactShipList();
 
         Console.WriteLine("Kontenerowiec");
         Console.WriteLine(_ships[inputShip].ContainersToString());
@@ -447,11 +444,7 @@ public class Menu
         
         string? serialNumber = Console.ReadLine();
 
-        if (serialNumber == null)
-        {
-            Console.WriteLine("Nieprawidłowy input");
-            return;
-        }
+        if (IsSerialNumberNull(serialNumber)) return;
 
         try
         {
@@ -475,7 +468,7 @@ public class Menu
 
     private void UnloadShip()
     {
-        int inputShip = ShowShipsCompressed() - 1;
+        int inputShip = DisplayCompactShipList();
         
         var containers = _ships[inputShip].Unload();
         
@@ -487,12 +480,12 @@ public class Menu
 
     private void ReplaceContainers()
     {
-        int inputContainer = ShowContainersCompressed() - 1;
+        int inputContainer = DisplayCompactContainerList();
         
         var with = _containers[inputContainer];
         
         
-        int inputShip = ShowShipsCompressed() - 1;
+        int inputShip = DisplayCompactShipList();
 
         Console.WriteLine("Kontenerowiec");
         Console.WriteLine(_ships[inputShip].ContainersToString());
@@ -500,11 +493,7 @@ public class Menu
         
         string? replaceSerialNumber = Console.ReadLine();
 
-        if (replaceSerialNumber == null)
-        {
-            Console.WriteLine("Nieprawidłowy input");
-            return;
-        }
+        if (IsSerialNumberNull(replaceSerialNumber)) return;
         
         
         _ships[inputShip].ReplaceContainers(replaceSerialNumber, with);
@@ -518,7 +507,7 @@ public class Menu
 
     private void MoveContainers()
     {
-        int inputFirstShip = ShowShipsCompressed() - 1;
+        int inputFirstShip = DisplayCompactShipList();
 
         Console.WriteLine("Kontenerowiec");
         Console.WriteLine(_ships[inputFirstShip].ContainersToString());
@@ -526,15 +515,11 @@ public class Menu
         
         string? serialNumber = Console.ReadLine();
 
-        if (serialNumber == null)
-        {
-            Console.WriteLine("Nieprawidłowy input");
-            return;
-        }
+        if (IsSerialNumberNull(serialNumber)) return;
 
         Console.WriteLine($"Wybierz kontenerowiec na który kontener {serialNumber} na zostać przeniesiony");
         
-        int inputSecondShip = ShowShipsCompressed() - 1;
+        int inputSecondShip = DisplayCompactShipList();
 
         try
         {
@@ -551,7 +536,7 @@ public class Menu
     
     private void LoadContainer()
     {
-        int inputContainer = ShowContainersCompressed() - 1;
+        int inputContainer = DisplayCompactContainerList();
 
         Console.WriteLine("Podaj masę ładunku");
         
@@ -569,11 +554,23 @@ public class Menu
         
         
     }
-    
+
+    private bool IsSerialNumberNull(string? sN)
+    {
+        if (sN == null)
+        {
+            Console.WriteLine("Nieprawidłowy input");
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
     
     private void UnloadContainer()
     {
-        int inputContainer = ShowContainersCompressed() - 1;
+        int inputContainer = DisplayCompactContainerList();
         
         _containers[inputContainer].Empty();
 
