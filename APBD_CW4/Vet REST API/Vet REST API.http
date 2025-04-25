@@ -6,7 +6,7 @@ Accept: application/json
 ###
 
 
-GET {{Vet_REST_API_HostAddress}}/api/v1/Animals/visits/4
+GET {{Vet_REST_API_HostAddress}}/api/v1/Animals/visits/1
 Accept: application/json
 
 ###
@@ -40,4 +40,34 @@ Content-Type: application/json
   "FurColour": "Test"
 }
 
+###
+
+
+DELETE {{Vet_REST_API_HostAddress}}/api/v1/Animals/1
+Accept: application/json
+
+###
+
+
+GET {{Vet_REST_API_HostAddress}}/api/v1/Animals/?name=Kitku
+Accept: application/json
+
+###
+
+POST {{Vet_REST_API_HostAddress}}/api/v1/Animals/visits/
+Content-Type: application/json
+
+  {
+    "date": "2026-05-07T15:10:00",
+    "animal": {
+      "id": 1,
+      "name": "Kitku",
+      "breed": "Maine Coon",
+      "weight": 5,
+      "furColour": "Grey"
+    },
+    "description": "?",
+    "price": 111.1
+  }
+  
 ###

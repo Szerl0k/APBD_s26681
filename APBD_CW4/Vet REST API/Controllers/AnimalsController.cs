@@ -9,9 +9,16 @@ public class AnimalsController : ControllerBase
 {
 
     [HttpGet]
-    public IActionResult GetAllAnimals()
+    public IActionResult GetAnimals([FromQuery] string? name)
     {
-        return Ok(Database.GetAnimals());
+        var animals = Database.GetAnimals();
+
+        if (name != null)
+        {
+            animals = animals.Where(a => a.Name.Equals(name)).ToList();
+        }
+        
+        return Ok(animals);
     }
 
     [HttpGet]
@@ -50,6 +57,19 @@ public class AnimalsController : ControllerBase
         return Ok(animalToUpdate);
 
     }
+    
+    
+    [HttpDelete]
+    [Route("{animalId:int}")]
+    public IActionResult DeleteAnimal([FromRoute] int animalId)
+    {
+        var animal = GetAnimalFromDB(animalId);
+        if (animal == null) return NotFound(AnimalCannotBeFoundMsg(animalId));
+        
+        Database.RemoveAnimal(animal);
+        
+        return NoContent();
+    }
 
 
 
@@ -67,6 +87,17 @@ public class AnimalsController : ControllerBase
     }
 
 
+    [HttpPost]
+    [Route("visits")]
+    public IActionResult CreateVisit([FromBody] Visit visit)
+    {
+        Database.AddVisit(visit);
+        
+        return Created($"/Animals/{visit.Animal.Id}", visit);
+    }
+    
+
+
     private Animal? GetAnimalFromDB(int id)
     {
         return Database.GetAnimals().FirstOrDefault(x => x.Id == id);
@@ -74,7 +105,7 @@ public class AnimalsController : ControllerBase
 
     private string AnimalCannotBeFoundMsg(int id)
     {
-        return $"$Animal with id {id} cannot be found";
+        return $"Animal with id {id} cannot be found";
     }
     
 }
