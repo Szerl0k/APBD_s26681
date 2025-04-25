@@ -1,6 +1,43 @@
 @Vet_REST_API_HostAddress = http://localhost:5041
 
-GET {{Vet_REST_API_HostAddress}}/weatherforecast/
+GET {{Vet_REST_API_HostAddress}}/api/v1/Animals/
 Accept: application/json
+
+###
+
+
+GET {{Vet_REST_API_HostAddress}}/api/v1/Animals/visits/4
+Accept: application/json
+
+###
+
+
+GET {{Vet_REST_API_HostAddress}}/api/v1/Animals/1
+Accept: application/json
+
+###
+
+POST {{Vet_REST_API_HostAddress}}/api/v1/Animals/
+Content-Type: application/json
+
+{
+  "name": "Test",
+  "breed": "Szczur",
+  "weight": 1.2,
+  "furColour": "Grey"
+}
+
+###
+
+
+PUT {{Vet_REST_API_HostAddress}}/api/v1/Animals/1
+Content-Type: application/json
+
+{
+  "Name": "Test",
+  "Breed": "Test",
+  "Weight": 10,
+  "FurColour": "Test"
+}
 
 ###
