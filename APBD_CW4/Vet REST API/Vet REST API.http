@@ -21,8 +21,8 @@ POST {{Vet_REST_API_HostAddress}}/api/v1/Animals/
 Content-Type: application/json
 
 {
-  "name": "Test",
-  "breed": "Szczur",
+  "name": "Kitku",
+  "breed": "Caaat",
   "weight": 1.2,
   "furColour": "Grey"
 }
