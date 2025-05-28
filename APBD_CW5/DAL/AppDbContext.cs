@@ -9,6 +9,7 @@ public class AppDbContext : DbContext
     public DbSet<Patient> Patients { get; set; }
     public DbSet<Prescription> Prescriptions { get; set; }
     public DbSet<Medicament> Medicaments { get; set; }
+    public DbSet<PrescriptionMedicament> PrescriptionMedicaments { get; set; }
     
     public AppDbContext(DbContextOptions options) : base(options) {}
 
@@ -166,11 +167,38 @@ public class AppDbContext : DbContext
                 Type = "ee blocker"
             }
         };
+
+        var prescriptionMedicaments = new List<PrescriptionMedicament>
+        {
+            new()
+            {
+                IdMedicament = 1,
+                IdPrescription = 1,
+                Dose = 5,
+                Details = "Some details"
+            },
+            new ()
+            {
+                IdMedicament = 2,
+                IdPrescription = 1,
+                Dose = 99,
+                Details = "Some details"
+            },
+            new ()
+            {
+                IdMedicament = 3,
+                IdPrescription = 2,
+                Dose = 1,
+                Details = "Some other details"
+            }
+        };
+        
         
         
         modelBuilder.Entity<Doctor>().HasData(doctors);
-        modelBuilder.Entity<Prescription>().HasData(prescriptions);
         modelBuilder.Entity<Patient>().HasData(patients);
+        modelBuilder.Entity<Prescription>().HasData(prescriptions);
         modelBuilder.Entity<Medicament>().HasData(medicaments);
+        modelBuilder.Entity<PrescriptionMedicament>().HasData(prescriptionMedicaments);
     }
 }

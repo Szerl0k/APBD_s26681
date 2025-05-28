@@ -1,4 +1,5 @@
 using APBD_CW5.DAL;
+using APBD_CW5.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerUI;
@@ -41,9 +42,9 @@ public class Program
                 }
             });
         });
-        
-        
 
+
+        builder.Services.AddScoped<IDbService, DbService>();
 
         var app = builder.Build();
 
