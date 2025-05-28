@@ -16,12 +16,12 @@ public class PrescriptionsController(IDbService service) : ControllerBase
         return Ok(await service.GetPrescriptionsAsync());
     }
     
-    [HttpPost]
-    public async Task<IActionResult> AddPrescriptionAsync([FromBody] PrescriptionPostGto prescriptionPostGto)
+    [HttpPut]
+    public async Task<IActionResult> AddPrescriptionAsync([FromBody] PrescriptionPutGto prescriptionPutGto)
     {
         try
         {
-            return Ok(await service.AddPrescriptionAsync(prescriptionPostGto));
+            return Ok(await service.AddPrescriptionAsync(prescriptionPutGto));
         }
         catch (NotFoundException e)
         {
@@ -30,6 +30,19 @@ public class PrescriptionsController(IDbService service) : ControllerBase
         catch (Exception e)
         {
             return BadRequest(e.Message);
+        }
+    }
+
+    [HttpGet("{id}")]
+    public async Task<IActionResult> GetPatientInfoAsync([FromRoute] int id)
+    {
+        try
+        {
+            return Ok(await service.GetPatientByIdAsync(id));
+        }
+        catch (NotFoundException e)
+        {
+            return NotFound(e.Message);
         }
     }
 }

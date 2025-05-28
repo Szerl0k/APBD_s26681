@@ -15,7 +15,7 @@ public class DbService(AppDbContext data) : IDbService
         return await data.Prescriptions.Select(pr => new PrescriptionGetDto
         {
             IdPrescription = pr.IdPrescription,
-            Patient = new PatientGetDto()
+            PatientShort = new PatientShortGetDto()
             {
                 IdPatient = pr.Patient.IdPatient,
                 FirstName = pr.Patient.FirstName,
@@ -39,20 +39,21 @@ public class DbService(AppDbContext data) : IDbService
         }).ToListAsync();
     }
 
-    public async Task<PrescriptionGetDto> AddPrescriptionAsync(PrescriptionPostGto prescriptionData)
+    public async Task<PrescriptionGetDto> AddPrescriptionAsync(PrescriptionPutGto prescriptionData)
     {
-        List<Medicament> medicaments = [];
-
+        // Check if Date is later than DueTo
         if (prescriptionData.Date > prescriptionData.DueTo)
         {
             throw new ArgumentException("DueTo must be greater than Date");
         }
 
+        // Check if <=10 medicaments
         if (prescriptionData.Medicaments.Count >= 10)
         {
             throw new ArgumentException("Maximum 10 medicaments per prescription is allowed");
         }
 
+        // Check if medicaments exist
         if (prescriptionData.Medicaments.Count != 0)
         {
             foreach (var medicId in prescriptionData.Medicaments)
@@ -66,6 +67,7 @@ public class DbService(AppDbContext data) : IDbService
             }
         }
         
+        // Check if doctor exists
         var doctor = await data.Doctors.FirstOrDefaultAsync(d => prescriptionData.IdDoctor == d.IdDoctor);
 
         if (doctor is null)
@@ -73,6 +75,7 @@ public class DbService(AppDbContext data) : IDbService
             throw new NotFoundException($"Doctor {prescriptionData.IdDoctor} not found");
         }
         
+        // Check if patient exists, if not, create one
         var patient = await data.Patients.FirstOrDefaultAsync(p => p.IdPatient == prescriptionData.Patient.IdPatient);
         if (patient is null)
         {
@@ -100,7 +103,7 @@ public class DbService(AppDbContext data) : IDbService
         return new PrescriptionGetDto()
         {
             IdPrescription = prescription.IdPrescription,
-            Patient = new PatientGetDto()
+            PatientShort = new PatientShortGetDto()
             {
                 IdPatient = prescription.Patient.IdPatient,
                 FirstName = prescription.Patient.FirstName,
@@ -121,11 +124,12 @@ public class DbService(AppDbContext data) : IDbService
                 Id = m.IdMedicament,
                 Name = m.Medicament.Name,
                 Dose = m.Dose,
+                Details = m.Details
             }).ToList(),
         };
     }
 
-    public async Task<PatientGetDto> AddPatientAsync(PatientPutDto addPatientPutDto)
+    public async Task<PatientShortGetDto> AddPatientAsync(PatientPutDto addPatientPutDto)
     {
         var patient = await data.Patients.FirstOrDefaultAsync(p => p.IdPatient == addPatientPutDto.IdPatient);
         if (patient is not null)
@@ -144,12 +148,49 @@ public class DbService(AppDbContext data) : IDbService
         await data.Patients.AddAsync(patient);
         await data.SaveChangesAsync();
         
-        return new PatientGetDto()
+        return new PatientShortGetDto()
         {
             IdPatient = patient.IdPatient,
             FirstName = patient.FirstName,
             LastName = patient.LastName,
             BirthDate = patient.BirthDate
         };
+    }
+
+    public async Task<PatientGetDto> GetPatientByIdAsync(int id)
+    {
+        var result = await data.Patients.Select(pa => new PatientGetDto()
+        {
+            IdPatient = pa.IdPatient,
+            FirstName = pa.FirstName,
+            LastName = pa.LastName,
+            BirthDate = pa.BirthDate,
+            Prescriptions = data.Prescriptions.
+                Where(pr => pr.IdPatient == pa.IdPatient).
+                OrderBy(pr => pr.DueDate).
+                Select(pr => new PrescriptionWithoutPatientGetDto()
+                {
+                    IdPrescription = pr.IdPrescription,
+                    Date = pr.Date,
+                    DueDate = pr.DueDate,
+                    Doctor = new DoctorGetDto()
+                    {
+                        IdDoctor = pr.Doctor.IdDoctor,
+                        FirstName = pr.Doctor.FirstName,
+                        LastName = pr.Doctor.LastName,
+                        Email = pr.Doctor.Email,
+                    },
+                    Medicaments = pr.PrescriptionMedicaments.Select(m => new MedicamentGetDto()
+                    {
+                        Id = m.IdMedicament,
+                        Name = m.Medicament.Name,
+                        Dose = m.Dose,
+                        Details = m.Details
+                        
+                    }).ToList(),
+                }).ToList()
+        }).FirstOrDefaultAsync(p => p.IdPatient == id);
+        
+        return result ?? throw new NotFoundException($"Patient {id} not found");
     }
 }

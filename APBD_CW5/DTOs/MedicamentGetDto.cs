@@ -7,4 +7,6 @@ public class MedicamentGetDto
     
     public int? Dose { get; set; }
     
+    public string Details { get; set; } = null!;
+    
 }

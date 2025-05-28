@@ -6,7 +6,9 @@ namespace APBD_CW5.Services;
 public interface IDbService
 {
     public Task<ICollection<PrescriptionGetDto>> GetPrescriptionsAsync();
-    public Task<PrescriptionGetDto> AddPrescriptionAsync(PrescriptionPostGto addPrescriptionPostGto);
+    public Task<PrescriptionGetDto> AddPrescriptionAsync(PrescriptionPutGto addPrescriptionPutGto);
     
-    public Task<PatientGetDto> AddPatientAsync(PatientPutDto addPatientPutDto);
+    public Task<PatientShortGetDto> AddPatientAsync(PatientPutDto addPatientPutDto);
+    
+    public Task<PatientGetDto> GetPatientByIdAsync(int id);
 }
