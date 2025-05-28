@@ -1,3 +1,5 @@
+using APBD_CW5.DAL;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerUI;
 
@@ -12,6 +14,10 @@ public class Program
         // Add services to the container.
         builder.Services.AddAuthorization();
         builder.Services.AddControllers();
+        builder.Services.AddDbContext<AppDbContext>(opt =>
+        {
+            opt.UseSqlServer(builder.Configuration.GetConnectionString("Default"));
+        });
 
         // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
         builder.Services.AddEndpointsApiExplorer();
@@ -35,6 +41,9 @@ public class Program
                 }
             });
         });
+        
+        
+
 
         var app = builder.Build();
 
