@@ -17,11 +17,11 @@ public class PrescriptionsController(IDbService service) : ControllerBase
     }
     
     [HttpPut]
-    public async Task<IActionResult> AddPrescriptionAsync([FromBody] PrescriptionPutGto prescriptionPutGto)
+    public async Task<IActionResult> AddPrescriptionAsync([FromBody] PrescriptionPutDto prescriptionPutDto)
     {
         try
         {
-            return Ok(await service.AddPrescriptionAsync(prescriptionPutGto));
+            return Ok(await service.AddPrescriptionAsync(prescriptionPutDto));
         }
         catch (NotFoundException e)
         {

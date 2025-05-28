@@ -39,7 +39,7 @@ public class DbService(AppDbContext data) : IDbService
         }).ToListAsync();
     }
 
-    public async Task<PrescriptionGetDto> AddPrescriptionAsync(PrescriptionPutGto prescriptionData)
+    public async Task<PrescriptionGetDto> AddPrescriptionAsync(PrescriptionPutDto prescriptionData)
     {
         // Check if Date is later than DueTo
         if (prescriptionData.Date > prescriptionData.DueTo)

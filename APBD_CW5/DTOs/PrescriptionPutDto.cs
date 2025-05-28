@@ -1,6 +1,6 @@
 ﻿namespace APBD_CW5.DTOs;
 
-public class PrescriptionPutGto
+public class PrescriptionPutDto
 {
     public PatientPutDto Patient { get; set; } = null!;
     public DateTime Date { get; set; }
